@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      margin: 0;
+      background: url("./cro001.jpg") no-repeat center center/cover;
+      background-attachment: fixed;
+      z-index: 1;
+    }
+
+    .container {
+      width: 50%;
+      height: 35%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -15%);
+      text-align: center;
+    }
+
+    .teeth {
+      width: 90px;
+      height: 90px;
+      border-radius: 1rem;
+      background: white;
+      box-shadow: 0.2rem 0.3rem 0.5rem rgba(0, 0, 0, 0.5);
+      display: inline-block;
+      position: absolute;
+    }
+
+    .first-tooth {
+      top: 0px;
+      left: 5px;
+    }
+
+    .second-tooth {
+      top: 100px;
+      left: 30px;
+    }
+
+    .third-tooth {
+      bottom: 40px;
+      left: 120px;
+    }
+
+    .fourth-tooth {
+      bottom: 40px;
+      left: 220px;
+    }
+
+    .fifth-tooth {
+      bottom: 40px;
+      left: 330px;
+    }
+
+    .sixth-tooth {
+      bottom: 40px;
+      right: 330px;
+    }
+
+    .seventh-tooth {
+      bottom: 40px;
+      right: 220px;
+    }
+
+    .eighth-tooth {
+      bottom: 40px;
+      right: 110px;
+    }
+
+    .ninth-tooth {
+      top: 100px;
+      right: 20px;
+    }
+
+    .tenth-tooth {
+      top: 0px;
+      right: 5px;
+    }
+
+    .box {
+      width: 10%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      border: 2px solid rgb(241, 135, 135);
+    }
+
+    .before {
+      background: yellow;
+    }
+
+    .after {
+      background-color: transparent;
+    }
+
+    .container {
+      cursor: url(./spray.png);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="teeth first-tooth"></div>
+    <div class="teeth second-tooth"></div>
+    <div class="teeth third-tooth"></div>
+    <div class="teeth fourth-tooth"></div>
+    <div class="teeth fifth-tooth"></div>
+    <div class="teeth sixth-tooth"></div>
+    <div class="teeth seventh-tooth"></div>
+    <div class="teeth eighth-tooth"></div>
+    <div class="teeth ninth-tooth"></div>
+    <div class="teeth tenth-tooth"></div>
+  </div>
+
+  <div class="box" style="color: yellow;">
+    最高紀錄:
+    <br>
+    玩家: <span id="highscore-player">-</span>
+    <br>
+    分數: <span id="highscore-score">-</span>
+    <br>
+    <h2>剩 <span id="text-countdown">10</span> 秒</h2>
+    目前分數: <span id="text-score">0</span>
+    <br>
+    <br>
+    <input type="button" value="start" id="btn-start">
+
+  </div>
+
+  <script>
+    const btnStart = document.getElementById('btn-start')
+    const teeth = document.getElementsByClassName('teeth')
+    const textScore = document.getElementById('text-score')
+    const textHighscorePlayer = document.getElementById('highscore-player')
+    const textHighscore = document.getElementById('highscore-score')
+    const textCountdown = document.getElementById('text-countdown')
+
+    let score = 0
+    let timer = 0
+    let countdown = 10
+    let highscore = { name: '', score: 0 }
+    const highStorage = JSON.parse(localStorage.getItem('wam'))
+    if (highStorage !== null) {
+      highscore = highStorage
+      textHighscorePlayer.innerText = highscore.name
+      textHighscore.innerText = highscore.score
+    }
+
+    btnStart.onclick = () => {
+      btnStart.disabled = true
+      score = 0
+      textScore.innerText = score
+
+      countdown = 10
+      textCountdown.innerText = countdown
+
+      timer = setInterval(container, 1000)
+      container()
+    }
+
+    const container = () => {
+      for (const hole of teeth) {
+        hole.classList.remove('before')
+        hole.classList.remove('after')
+      }
+      for (let i = 0; i < 3; i++) {
+        const random = Math.floor(Math.random() * 9)
+        teeth[random].classList.add('before')
+      }
+      countdown--
+      textCountdown.innerText = countdown
+      if (countdown <= 0) {
+        clearInterval(timer)
+        alert(`你得到 ${score} 分`)
+        btnStart.disabled = false
+        for (const hole of teeth) {
+          hole.classList.remove('before')
+          hole.classList.remove('after')
+        }
+
+        if (score > highscore.score) {
+          audio.play()
+          highscore.score = score
+          highscore.name = prompt('最高分! 請輸入名字')
+          if (highscore.name === null || highscore.name.length === 0) {
+            highscore.name = 'NoName'
+          }
+          textHighscorePlayer.innerText = highscore.name
+          textHighscore.innerText = highscore.score
+          localStorage.setItem('wam', JSON.stringify(highscore))
+        }
+      }
+    }
+
+    for (const hole of teeth) {
+      hole.onclick = () => {
+        if (hole.classList.contains('before')) {
+          hole.classList.replace('before', 'after')
+
+          score++
+          textScore.innerText = score
+        }
+      }
+    }
+
+
+  </script>
+</body>
+
+</html>
